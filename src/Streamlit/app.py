@@ -2,6 +2,20 @@ import streamlit as st
 import pandas as pd
 from css import apply_custom_css
 from utils import fetch_page, get_total_count, show_loading_animation, show_skeleton_loader
+from preprocessor import *
+import sys
+import types
+
+def setup_custom_classes():
+    if '__main__' not in sys.modules:
+        sys.modules['__main__'] = types.ModuleType('__main__')
+    from custom_transformers import NRemover, TwoMerPCA, ThreeMerPCA, FeatureCreator, FeatureDropper
+    print("Setting up custom classes in __main__")
+    sys.modules['__main__'].NRemover = NRemover
+    sys.modules['__main__'].TwoMerPCA = TwoMerPCA
+    sys.modules['__main__'].ThreeMerPCA = ThreeMerPCA
+    sys.modules['__main__'].FeatureCreator = FeatureCreator
+    sys.modules['__main__'].FeatureDropper = FeatureDropper
 
 THEME_CONFIG = {
     "primary_color": "#57268C",
@@ -74,7 +88,6 @@ def prediction_dialog():
                 st.error(f"Error reading file: {str(e)}")
     st.markdown("---")
     col1, col2, col3 = st.columns([1, 1, 1])
-    
     with col1:
         if st.button("🚀 Run Prediction", type="primary", use_container_width=True):
             if not accession_id.strip():
@@ -88,19 +101,32 @@ def prediction_dialog():
             if uploaded_file is None:
                 st.error("❌ Please upload a FASTA file")
                 return
-            
+
             with st.spinner("🔄 Running AI prediction..."):
-                import time
-                time.sleep(2)
+                import tempfile
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".fasta") as tmp:
+                    tmp.write(uploaded_file.read())
+                    temp_path = tmp.name
+                setup_custom_classes()
+                prediction_class = formatting_and_prediction(
+                    file_path=temp_path,
+                    location=location,
+                    accession_id=accession_id,
+                    collection_date="2020-01-01" 
+                )
+
+                label_map = {0: "Alpha", 1: "Delta", 2: "Omicron"}
+                predicted_label = label_map.get(prediction_class, "Unknown")
+
                 st.session_state.prediction_result = {
                     "accession_id": accession_id,
                     "location": location,
                     "filename": uploaded_file.name,
                     "file_size": uploaded_file.size,
                     "status": "completed",
-                    "confidence": 0.95,
-                    "prediction": "Pathogenic variant detected"
+                    "prediction": predicted_label
                 }
+
             st.success("✅ Prediction completed successfully!")
             st.balloons()
             st.markdown("### 📊 Prediction Results")
@@ -108,21 +134,12 @@ def prediction_dialog():
                 "Accession ID": accession_id,
                 "Location": location,
                 "File": uploaded_file.name,
-                "Prediction": "Pathogenic variant detected",
-                "Confidence": "95%",
+                "Prediction": predicted_label,
                 "Status": "✅ Completed"
             }
-            
+
             for key, value in result_data.items():
                 st.write(f"**{key}:** {value}")
-    
-    with col2:
-        if st.button("🔄 Reset", use_container_width=True):
-            st.rerun()
-    
-    with col3:
-        if st.button("❌ Cancel", use_container_width=True):
-            st.rerun()
 
 def main():
     apply_custom_css()
