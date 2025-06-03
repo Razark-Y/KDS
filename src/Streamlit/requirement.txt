@@ -1,0 +1,18 @@
+# Core
+python_version == "3.7.*"  # or "3.8.*" depending on your environment
+streamlit>=1.0
+pandas>=1.1
+numpy>=1.18
+
+# ML
+lightgbm==2.2.3
+scikit-learn>=0.24
+
+# Supabase
+supabase-py>=1.0
+
+# Needed for custom transformers (if applicable)
+joblib>=1.2
+
+# Optional for your custom modules
+# Ensure css.py and utils.py are in your project

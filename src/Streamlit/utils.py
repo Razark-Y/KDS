@@ -6,7 +6,9 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 
 @st.cache_resource
 def load_supabase():
-    return create_client(SUPABASE_URL, SUPABASE_KEY)
+    url = st.secrets["supabase"]["url"]
+    key = st.secrets["supabase"]["key"]
+    return create_client(url, key)
 
 supabase: Client = load_supabase()
 
