@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from custom_transformers import find_all_orfs_fast, codon_table
 
 def formatting_and_prediction(file_path, location, accession_id, collection_date):
-    BASE_DIR = os.path.dirname(__file__)  # folder where preprocessor.py is
+    BASE_DIR = os.path.dirname(__file__)  
     pipeline_path = os.path.join(BASE_DIR, "stacked_pipeline.joblib")
     model_path = os.path.join(BASE_DIR, "lgbm_classifier.pkl")
     stacked_pipeline = joblib.load(pipeline_path)
