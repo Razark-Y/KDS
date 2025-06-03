@@ -282,7 +282,59 @@ def apply_custom_css():
             background-position: -200% 0%;
         }}
     }}
-    
+    .stButton[data-testid="baseButton-secondary"] > button {{
+        background: linear-gradient(45deg, #57268C, #7B4FBF) !important;
+        color: white !important;
+        border: 2px solid #57268C !important;
+        border-radius: 0.5rem !important;
+        padding: 0.7rem 1.5rem !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 4px rgba(87, 38, 140, 0.3) !important;
+    }}
+
+    .stButton[data-testid="baseButton-secondary"] > button:hover {{
+        background: linear-gradient(45deg, #7B4FBF, #57268C) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(87, 38, 140, 0.4) !important;
+        border-color: #7B4FBF !important;
+    }}
+
+    /* Dialog styling */
+    div[data-testid="stModal"] {{
+        background-color: rgba(26, 26, 26, 0.95) !important;
+    }}
+
+    div[data-testid="stModal"] > div {{
+        background-color: #2A2A2A !important;
+        border: 1px solid #57268C !important;
+        border-radius: 1rem !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+        color: #FFFFFF !important;
+    }}
+
+    /* File uploader styling */
+    .stFileUploader > div {{
+        background-color: #2A2A2A !important;
+        border: 2px dashed #57268C !important;
+        border-radius: 0.5rem !important;
+        color: #FFFFFF !important;
+    }}
+
+    .stFileUploader label {{
+        color: #FFFFFF !important;
+    }}
+
+    /* Expander styling */
+    .streamlit-expanderHeader {{
+        background-color: #2A2A2A !important;
+        color: #FFFFFF !important;
+    }}
+
+    .streamlit-expanderContent {{
+        background-color: #1A1A1A !important;
+        color: #FFFFFF !important;
+    }}
     /* Hide Streamlit menu and footer */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}

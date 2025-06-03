@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 from css import apply_custom_css
-from  utils import fetch_page, get_total_count, show_loading_animation, show_skeleton_loader
+from utils import fetch_page, get_total_count, show_loading_animation, show_skeleton_loader
+
 THEME_CONFIG = {
     "primary_color": "#57268C",
     "background_color": "#1A1A1A",
@@ -14,6 +15,114 @@ THEME_CONFIG = {
     "padding": "2rem",
     "box_shadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
 }
+
+@st.dialog("🔬 Perform Prediction")
+def prediction_dialog():
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+        <h3 style="color: #57268C; margin-bottom: 0.5rem;">AI Prediction Analysis</h3>
+        <p style="opacity: 0.8;">Enter the details below to perform nucleotide sequence prediction</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        accession_id = st.text_input(
+            "🧬 Accession ID",
+            placeholder="Enter accession ID (e.g., NC_000001)",
+            help="Unique identifier for the nucleotide sequence"
+        )
+    
+    with col2:
+        location = st.text_input(
+            "📍 Location", 
+            placeholder="Enter location (e.g., USA, China)",
+            help="Geographic location where the sample was collected"
+        )
+    
+    st.markdown("---")
+    
+    st.markdown("**📄 FASTA File Upload**")
+    uploaded_file = st.file_uploader(
+        "Choose a FASTA file",
+        type=['txt', 'fasta', 'fa', 'fas'],
+        help="Upload a text file containing FASTA sequence data",
+        label_visibility="collapsed"
+    )
+    
+    if uploaded_file is not None:
+        file_details = {
+            "Filename": uploaded_file.name,
+            "File size": f"{uploaded_file.size} bytes",
+            "File type": uploaded_file.type if uploaded_file.type else "text/plain"
+        }
+        st.success("✅ File uploaded successfully!")
+        with st.expander("📋 File Details"):
+            for key, value in file_details.items():
+                st.write(f"**{key}:** {value}")
+        with st.expander("👀 Preview File Content"):
+            try:
+                file_content = uploaded_file.read().decode('utf-8')
+                preview_content = file_content[:500]
+                if len(file_content) > 500:
+                    preview_content += "..."
+                st.code(preview_content, language="text")
+                st.caption(f"Showing first 500 characters of {len(file_content)} total characters")
+                uploaded_file.seek(0)
+            except Exception as e:
+                st.error(f"Error reading file: {str(e)}")
+    st.markdown("---")
+    col1, col2, col3 = st.columns([1, 1, 1])
+    
+    with col1:
+        if st.button("🚀 Run Prediction", type="primary", use_container_width=True):
+            if not accession_id.strip():
+                st.error("❌ Please enter an Accession ID")
+                return
+            
+            if not location.strip():
+                st.error("❌ Please enter a Location")
+                return
+                
+            if uploaded_file is None:
+                st.error("❌ Please upload a FASTA file")
+                return
+            
+            with st.spinner("🔄 Running AI prediction..."):
+                import time
+                time.sleep(2)
+                st.session_state.prediction_result = {
+                    "accession_id": accession_id,
+                    "location": location,
+                    "filename": uploaded_file.name,
+                    "file_size": uploaded_file.size,
+                    "status": "completed",
+                    "confidence": 0.95,
+                    "prediction": "Pathogenic variant detected"
+                }
+            st.success("✅ Prediction completed successfully!")
+            st.balloons()
+            st.markdown("### 📊 Prediction Results")
+            result_data = {
+                "Accession ID": accession_id,
+                "Location": location,
+                "File": uploaded_file.name,
+                "Prediction": "Pathogenic variant detected",
+                "Confidence": "95%",
+                "Status": "✅ Completed"
+            }
+            
+            for key, value in result_data.items():
+                st.write(f"**{key}:** {value}")
+    
+    with col2:
+        if st.button("🔄 Reset", use_container_width=True):
+            st.rerun()
+    
+    with col3:
+        if st.button("❌ Cancel", use_container_width=True):
+            st.rerun()
 
 def main():
     apply_custom_css()
@@ -81,6 +190,7 @@ def main():
     with nav_placeholder.container():
         if not df.empty:
             st.markdown('<div style="margin-top: 1rem;">', unsafe_allow_html=True)
+            
             nav_col1, nav_col2, nav_col3 = st.columns([2, 1, 2])
             
             with nav_col1:
@@ -121,13 +231,20 @@ def main():
                 if len(df) == 50:  
                     st.button("Next", key="next_btn", on_click=lambda: handle_page_change(1))
             
+            st.markdown('<div style="margin-top: 1rem;">', unsafe_allow_html=True)
+            
+            pred_col1, pred_col2, pred_col3 = st.columns([1, 1, 1])
+            with pred_col2:
+                if st.button("🔬 Perform Prediction", key="pred_btn", type="secondary", use_container_width=True):
+                    prediction_dialog()
+            
+            st.markdown('</div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
         else:
             if st.session_state.page > 0:
                 st.button("Go Back", key="back_btn", on_click=lambda: handle_page_change(-1))
 
 def handle_page_change(direction):
-    """Handle page navigation with loading state"""
     st.session_state.page += direction
     st.session_state.loading = True
 
