@@ -87,8 +87,8 @@ def prediction_dialog():
             except Exception as e:
                 st.error(f"Error reading file: {str(e)}")
     st.markdown("---")
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col1:
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
         if st.button("🚀 Run Prediction", type="primary", use_container_width=True):
             if not accession_id.strip():
                 st.error("❌ Please enter an Accession ID")
@@ -208,7 +208,7 @@ def main():
         if not df.empty:
             st.markdown('<div style="margin-top: 1rem;">', unsafe_allow_html=True)
             
-            nav_col1, nav_col2, nav_col3 = st.columns([2, 1, 2])
+            nav_col1, nav_col2, nav_col3 = st.columns([1, 3, 1])
             
             with nav_col1:
                 if st.session_state.page > 0:

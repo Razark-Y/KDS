@@ -189,14 +189,18 @@ def apply_custom_css():
     
     /* Page info styling */
     .page-info {{
-        text-align: center;
+        display: flex;                         
+        align-items: center;                   
+        justify-content: center;               
+        padding: 0 0.8rem !important;          
+        min-height: 48px !important;           
+        background-color: {THEME_CONFIG['secondary_background_color']} !important;
         color: {THEME_CONFIG['text_color']} !important;
-        font-family: {THEME_CONFIG['font_family']} !important;
-        font-weight: 500;
-        background-color: {THEME_CONFIG['secondary_background_color']};
-        padding: 0.5rem 1rem;
-        border-radius: {THEME_CONFIG['border_radius']};
-        margin: 0 1rem;
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+        border-radius: {THEME_CONFIG['border_radius']} !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+        margin: 0 auto; 
     }}
     
     /* Loading Animation Styles */
@@ -312,7 +316,15 @@ def apply_custom_css():
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
         color: #FFFFFF !important;
     }}
+    div[data-testid="stSuccess"] {{
+        border-radius: 0.5rem !important;
+        padding: 0.75rem 1rem !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    }}
 
+    div[data-testid="stSuccess"] > div:first-child {{
+        border-radius: 0.5rem !important;
+    }}
     /* File uploader styling */
     .stFileUploader > div {{
         background-color: #2A2A2A !important;
